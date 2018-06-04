@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 int		line_length(int fd)
 {
@@ -10,14 +11,10 @@ int		line_length(int fd)
 	char buffer;
 
 	counter = 0;
-	while (read(fd, &buffer, 1) != '\n')
+	while (read(fd, &buffer, 1) != '\n' && read(fd, &buffer, 1))
 	{
+		write(1, "l_length", 8);
 		counter++;
-		if (counter > 2147483647)
-		{
-			write(1, "\nInvalid map.", 12);
-			return (-1);
-		}
 	}
 	return (counter);
 }
@@ -30,6 +27,7 @@ int		map_height(int fd)
 	counter = 0;
 	while (read(fd, &buffer, 1))
 	{
+		write(1, "mheight", 7);
 		if (read(fd, &buffer, 1) == '\n')
 			counter++;
 	}
@@ -53,6 +51,40 @@ void	bsq(int *map, int fd)
 			open_space++;
 			i += line_length(fd);
 		}
+		i++;
+	}
+}
+
+void	load_array(char *filename)
+{
+	unsigned long counter;
+	int fd;
+	char buffer;
+	int *map;
+
+	counter = 0;
+	fd = open(filename, O_RDONLY); //should probably check if a directory
+	if (fd >= 0)
+	{
+		//convert chars to ints, put them in an array
+		map = (int*)malloc(sizeof(char) * ((line_length(fd) * map_height(fd)) + map_height(fd)));
+		write(1, "loop entered", 12);
+		while (counter < sizeof(map))
+		{
+			if (read(fd, &buffer, 1) == 'o')
+				map[counter] = 1;
+			if (read(fd, &buffer, 1) == '.')
+				map[counter] = 0;
+			if (read(fd, &buffer, 1) == '\n')
+				map[counter] = 4;
+			else
+			{
+				write(1, "\nInvalid map.", 12);
+				return;
+			}
+			counter++;
+		}
+		bsq(map, fd);
 	}
 }
 
@@ -64,6 +96,7 @@ void	stdinput(void)
 
 	fd = open("temp.txt", O_WRONLY);
 	i = 0;
+	//for some reason you can't just write chars directly to the file, but this solution sucks cause it's > 25 lines
 	while (read(0, &c, 1) != 0)
 	{
 		if (c == 'o')
@@ -90,40 +123,14 @@ void	stdinput(void)
 
 int		main(int argc, char **argv)
 {
-	char buffer;
-	int *map;
 	int i;
-	int fd;
-	unsigned long counter;
 
 	if (argc > 1)
 	{
 		i = 1;
 		while (argv[i])
 		{
-			counter = 0;
-			fd = open(argv[i], O_RDONLY); //should probably check if a directory
-			if (fd >= 0)
-			{
-				//convert chars to ints, put them in an array
-				map = (int*)malloc(sizeof(char) * ((line_length(fd) * map_height(fd)) + map_height(fd)));
-				while (counter < sizeof(map))
-				{
-					if (read(fd, &buffer, 1) == 'o')
-						map[counter] = 1;
-					if (read(fd, &buffer, 1) == '.')
-						map[counter] = 0;
-					if (read(fd, &buffer, 1) == '\n')
-						map[counter] = 4;
-					else
-					{
-						write(1, "\nInvalid map.", 12);
-						return(1);
-					}
-					counter++;
-				}
-			}
-			bsq(map, fd);
+			load_array(argv[i]);
 			write(1, "\n", 1);
 			i++;
 		}
