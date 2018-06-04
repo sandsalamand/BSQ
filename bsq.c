@@ -11,10 +11,13 @@ int		line_length(int fd)
 	char buffer;
 
 	counter = 0;
-	while (read(fd, &buffer, 1) != '\n' && read(fd, &buffer, 1))
+	while (read(fd, &buffer, 1))
 	{
-		write(1, "l_length", 8);
-		counter++;
+		if (buffer == '\n')
+		{
+			write(1, "l_length", 8);
+			counter++;
+		}
 	}
 	return (counter);
 }
