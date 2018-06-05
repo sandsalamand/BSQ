@@ -6,7 +6,7 @@
 /*   By: sgrindhe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/04 17:21:22 by sgrindhe          #+#    #+#             */
-/*   Updated: 2018/06/05 14:46:28 by sgrindhe         ###   ########.fr       */
+/*   Updated: 2018/06/05 15:55:50 by sgrindhe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int		main(void)
 	int 	starting_y;
 	int		size;
 	int		arr[4][4];
+	int		square_holder_map[4][4];
 
 	x = 0;
 	y = 0;
@@ -66,17 +67,19 @@ int		main(void)
 	starting_y = 0;
 	size = 2;
 	cur_y = 0;
+	cur_x = 0;
 	while (starting_y < 4)
 	{
 		while (starting_x < 4)
 		{
-			while (size <= 4)
+			//this condition checks to make sure the square hasn't grown out of the bounds of the map
+			while (size <= 4 && starting_x + size <= 4 && starting_y + size <= 4)
 			{
 				cur_y = starting_y;
-				while (cur_y < (starting_y + size) && cur_y < 4)
+				while (cur_y < (starting_y + size) && cur_y < 4 && arr[cur_x][cur_y] != 1)
 				{
 					cur_x = starting_x;
-					while (cur_x < (starting_x + size) && cur_x < 4)
+					while (cur_x < (starting_x + size) && cur_x < 4 && arr[cur_x][cur_y] != 1)
 					{
 						arr[cur_y][cur_x] = arr[cur_y][cur_x] + 1;
 						cur_x++;
