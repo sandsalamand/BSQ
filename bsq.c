@@ -15,8 +15,8 @@ int		line_length(int fd)
 	{
 		if (buffer == '\n')
 		{
-			write(1, "l_length", 8);
 			counter++;
+			printf("%d", counter);
 		}
 	}
 	return (counter);
@@ -75,11 +75,9 @@ void	load_array(char *filename)
 		while (counter < sizeof(map))
 		{
 			if (read(fd, &buffer, 1) == 'o')
-				map[counter] = 1;
+				map[x][y] = 'o';
 			if (read(fd, &buffer, 1) == '.')
-				map[counter] = 0;
-			if (read(fd, &buffer, 1) == '\n')
-				map[counter] = 4;
+				map[x][y] = '.';
 			else
 			{
 				write(1, "\nInvalid map.", 12);
@@ -87,6 +85,10 @@ void	load_array(char *filename)
 			}
 			counter++;
 		}
+		//debug
+		fd = 0;
+		while (map[fd])
+			printf("%d", map[fd]);
 		bsq(map, fd);
 	}
 }
