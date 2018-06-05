@@ -13,10 +13,10 @@ int		line_length(int fd)
 	counter = 0;
 	while (read(fd, &buffer, 1))
 	{
+		counter++;
 		if (buffer == '\n')
 		{
-			counter++;
-			printf("%d", counter);
+			return (counter);
 		}
 	}
 	return (counter);
@@ -31,29 +31,26 @@ int		map_height(int fd)
 	while (read(fd, &buffer, 1))
 	{
 		write(1, "mheight", 7);
-		if (read(fd, &buffer, 1) == '\n')
+		if (buffer == '\n')
 			counter++;
 	}
 	return (counter);
 }
 
-void	bsq(int *map, int fd)
+void	bsq(int **map, int fd)
 {
 	int i;
-	int open_space;
+	int cur_x;
+	int cur_y;
 
+	cur_x = 0;
+	cur_y = 0;
+	map[0][0] = 0;
 	i = 1;
-	open_space = 0;
 	while (i < map_height(fd) * line_length(fd))
 	{
 		//algorithm goes here -> :)
 
-		//maybe something like this?
-		if (map[i] == 0 && map[i + line_length(fd)] == 0)
-		{
-			open_space++;
-			i += line_length(fd);
-		}
 		i++;
 	}
 }
@@ -62,34 +59,42 @@ void	load_array(char *filename)
 {
 	unsigned long counter;
 	int fd;
+	int i;
 	char buffer;
-	int *map;
+	int **map;
+	int x;
+	int y;
 
+	x = 0;
+	y = 0;
+	i = 0;
 	counter = 0;
 	fd = open(filename, O_RDONLY); //should probably check if a directory
 	if (fd >= 0)
 	{
 		//convert chars to ints, put them in an array
-		map = (int*)malloc(sizeof(char) * ((line_length(fd) * map_height(fd)) + map_height(fd)));
+		map = malloc(sizeof(int) * line_length(fd));
 		write(1, "loop entered", 12);
+		while (i < line_length(fd))
+		{
+			map[i] = malloc(sizeof(int) * map_height(fd));
+			i++;
+		}
 		while (counter < sizeof(map))
 		{
 			if (read(fd, &buffer, 1) == 'o')
-				map[x][y] = 'o';
+				map[x][y] = 1;
 			if (read(fd, &buffer, 1) == '.')
-				map[x][y] = '.';
+				map[x][y] = 1;
 			else
 			{
 				write(1, "\nInvalid map.", 12);
 				return;
 			}
+			x++;
+			y++;
 			counter++;
 		}
-		//debug
-		fd = 0;
-		while (map[fd])
-			printf("%d", map[fd]);
-		bsq(map, fd);
 	}
 }
 
