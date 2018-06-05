@@ -30,9 +30,11 @@ int		map_height(int fd)
 	counter = 0;
 	while (read(fd, &buffer, 1))
 	{
-		write(1, "mheight", 7);
 		if (buffer == '\n')
+		{	
+			printf("%d", counter);
 			counter++;
+		}
 	}
 	return (counter);
 }
