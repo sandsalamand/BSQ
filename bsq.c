@@ -84,11 +84,12 @@ void	load_array(char *filename)
 		}
 		while (counter < sizeof(map))
 		{
-			if (read(fd, &buffer, 1) == 'o')
+			read(fd, &buffer, 1);
+			if (buffer == 'o')
 				map[x][y] = 1;
-			if (read(fd, &buffer, 1) == '.')
+			if (buffer == '.')
 				map[x][y] = 1;
-			else
+			else if (buffer != '\n')
 			{
 				write(1, "\nInvalid map.", 12);
 				return;
