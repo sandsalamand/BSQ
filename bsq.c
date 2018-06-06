@@ -8,15 +8,24 @@
 int		line_length(int fd)
 {
 	int counter;
+	int i;
 	char buffer;
 
 	counter = 0;
+	i = 0;
 	while (read(fd, &buffer, 1))
 	{
-		counter++;
-		if (buffer == '\n')
+		if (i > 0)
 		{
-			return (counter);
+			if (buffer == '\n')
+			{
+				return counter;
+			}
+			counter++;
+		}
+		if (buffer == '\n')
+		{	
+			i++;
 		}
 	}
 	return (counter);
@@ -27,12 +36,11 @@ int		map_height(int fd)
 	int counter;
 	char buffer;
 
-	counter = 0;
+	counter = 1;
 	while (read(fd, &buffer, 1))
 	{
 		if (buffer == '\n')
 		{	
-			printf("%d", counter);
 			counter++;
 		}
 	}
@@ -45,10 +53,10 @@ void	print_array(int **arr)
 	int		y;
 	y = 0;
 
-	while (y < 4)
+	while (y < 20)
 	{
 		x = 0;
-		while (x < 4)
+		while (x < 20)
 		{
 			printf("%d", arr[y][x]);
 			x++;
@@ -58,6 +66,7 @@ void	print_array(int **arr)
 	}
 }
 
+/*
 void	bsq(int **arr, int fd)
 {
 	int		**square_holder_map;
@@ -140,52 +149,71 @@ void	bsq(int **arr, int fd)
 	}
 	print_array(square_holder_map);
 }
-
+*/
 void	load_array(char *filename)
 {
-	int fd;
-	int i;
-	char buffer;
-	int **map;
-	int x;
-	int y;
+	int		fd;
+	char	buf;
+	int		**map;
+	int		x;
+	int		y;
+	int		i;
+	int		len;
+	int		hei;
 
 	x = 0;
 	y = 0;
 	i = 0;
+	
 	fd = open(filename, O_RDONLY); //should probably check if a directory
+	len = line_length(fd);
+	hei = map_height(fd);
+	close(fd);
+	fd = open(filename, O_RDONLY);
 	if (fd >= 0)
 	{
 		//convert chars to ints, put them in an array
-		map = malloc(sizeof(int*) * line_length(fd));
-		write(1, "loop entered", 12);
-		while (i < line_length(fd))
+		map = malloc(sizeof(int*) * hei);
+		while (i < hei)
 		{
-			map[i] = malloc(sizeof(int) * map_height(fd));
+			map[i] = malloc(sizeof(int) * len);
 			i++;
 		}
-		while (read(fd, &buffer, 1))
+		i = 0;
+
+		while (read(fd, &buf, 1) != 0)
 		{
-			while (read(fd, &buffer, 1) && buffer != '\n')
+			printf("%d\n", i);
+			if(i > 0)
 			{
-				if (buffer == 'o')
-					map[x][y] = 1;
-				if (buffer == '.')
-					map[x][y] = 0;
-				x++;
+				if (buf == 'o')
+				{
+					map[y][x] = 1;
+					print_array(map);
+					x++;
+				}
+				else if (buf == '.')
+				{
+					map[y][x] = 0;
+					print_array(map);
+					x++;
+				}
+				else if(buf == '\n')
+				{
+					y++;
+				}
+				else if(buf != 'o' && buf != '.' && buf != 'n')
+				{
+					write(1, "\nInvalid map.", 12);
+				}
 			}
-			if (buffer == '\n')
-				y++;
-			else
-			{
-				write(1, "\nInvalid map.", 12);
-				return;
-			}
+			if (buf == '\n' && i < 10)
+				i++;
 		}
-		bsq(map, fd);
 	}
 }
 
+/*
 void	stdinput(void)
 {
 	int i;
@@ -218,7 +246,7 @@ void	stdinput(void)
 	}
 	//main(2, "output.txt");
 }
-
+*/
 int		main(int argc, char **argv)
 {
 	int i;
@@ -229,11 +257,12 @@ int		main(int argc, char **argv)
 		while (argv[i])
 		{
 			load_array(argv[i]);
-			write(1, "\n", 1);
+//			write(1, "\n", 1);
 			i++;
 		}
 	}
 	//take map from standard input if no file is given as argument
-	else
-		stdinput();
+//	else
+//		stdinput();
+	return (0);
 }
