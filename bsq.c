@@ -6,7 +6,7 @@
 /*   By: sgrindhe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/06 02:42:23 by sgrindhe          #+#    #+#             */
-/*   Updated: 2018/06/06 04:56:00 by sgrindhe         ###   ########.fr       */
+/*   Updated: 2018/06/06 05:07:17 by sgrindhe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,8 @@ void	map_clear(int **map, int m_height, int line_len)
 		x = 0;
 		while (x < line_len)
 		{
-			map[y][x] = 0;
+			if (map[y][x] == 3)
+				map[y][x] = 0;
 			x++;
 		}
 		y++;
@@ -102,13 +103,13 @@ void	map_redraw(int **map, int size, int xcorner, int ycorner)
 	int x;
 	int y;
 
-	x = 0;
-	y = 0;
+	x = xcorner;
+	y = ycorner;
 	while (y < ycorner + size)
 	{
 		x = 0;
 		while (x < xcorner + size)
-		{
+		{	
 			map[y][x] = 3;
 			x++;
 		}
@@ -154,7 +155,7 @@ void	bsq(int **arr,  int m_height, int line_len)
 	//print_array(arr, m_height, line_len);
 	starting_x = 0;
 	starting_y = 0;
-	biggest_size = 0;
+	biggest_size = 1;
 	size = 2;
 	cur_y = 0;
 	cur_x = 0;
@@ -174,6 +175,7 @@ void	bsq(int **arr,  int m_height, int line_len)
 						if (size > biggest_size)
 						{
 							biggest_size = size;
+							printf("cur_x = %d, cur_y = %d\n", cur_x, cur_y);
 							map_clear(square_holder_map, m_height, line_len);
 							map_redraw(square_holder_map, biggest_size, cur_x, cur_y);
 							square_holder_map[cur_y][cur_x] = 3;
