@@ -70,6 +70,7 @@ void	bsq(int **arr, int fd)
 	int		size;
 	int		i;
 
+	write(1, "break", 5);
 	x = 0;
 	y = 0;
 	// fill a 4x4 array with 0's
@@ -85,7 +86,7 @@ void	bsq(int **arr, int fd)
 	}
 
 	i = 0;
-	*square_holder_map = malloc(sizeof(int) * line_length(fd));
+	square_holder_map = malloc(sizeof(int*) * line_length(fd));
 	while (i < 10)
 	{
 		square_holder_map[i] = malloc(sizeof(int) * map_height(fd));
@@ -156,7 +157,7 @@ void	load_array(char *filename)
 	if (fd >= 0)
 	{
 		//convert chars to ints, put them in an array
-		map = malloc(sizeof(int) * line_length(fd));
+		map = malloc(sizeof(int*) * line_length(fd));
 		write(1, "loop entered", 12);
 		while (i < line_length(fd))
 		{
@@ -165,17 +166,21 @@ void	load_array(char *filename)
 		}
 		while (read(fd, &buffer, 1))
 		{
-			if (buffer == 'o')
-				map[x][y] = 1;
-			if (buffer == '.')
-				map[x][y] = 1;
-			else if (buffer != '\n')
+			while (read(fd, &buffer, 1) && buffer != '\n')
+			{
+				if (buffer == 'o')
+					map[x][y] = 1;
+				if (buffer == '.')
+					map[x][y] = 0;
+				x++;
+			}
+			if (buffer == '\n')
+				y++;
+			else
 			{
 				write(1, "\nInvalid map.", 12);
 				return;
 			}
-			x++;
-			y++;
 		}
 		bsq(map, fd);
 	}
