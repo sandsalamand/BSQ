@@ -60,6 +60,7 @@ void	print_array(int **arr)
 
 void	bsq(int **arr, int fd)
 {
+	int		**square_holder_map;
 	int		x;
 	int		y;
 	int		cur_x;
@@ -67,8 +68,7 @@ void	bsq(int **arr, int fd)
 	int		starting_x;
 	int 	starting_y;
 	int		size;
-	int		**square_holder_map;
-	int i;
+	int		i;
 
 	x = 0;
 	y = 0;
@@ -97,7 +97,7 @@ void	bsq(int **arr, int fd)
 		x = 0;
 		while (x < 4)
 		{
-			square_holder_map[x][y] = 0;
+			square_holder_map[x][y] = arr[x][y];
 			x++;
 		}
 		y++;
