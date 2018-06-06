@@ -6,7 +6,7 @@
 /*   By: sgrindhe <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/06 02:42:23 by sgrindhe          #+#    #+#             */
-/*   Updated: 2018/06/06 05:07:17 by sgrindhe         ###   ########.fr       */
+/*   Updated: 2018/06/06 06:39:14 by sgrindhe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,14 +157,15 @@ void	bsq(int **arr,  int m_height, int line_len)
 	starting_y = 0;
 	biggest_size = 1;
 	size = 2;
-	cur_y = 0;
-	cur_x = 0;
 	while (starting_y < m_height)
 	{
 		while (starting_x < line_len)
 		{
 			//this condition checks to make sure the square hasn't grown out of the bounds of the map
-			while (size <= m_height && starting_x + size <= line_len && starting_y + size <= m_height && arr[cur_y][cur_x] != 1)
+			cur_x = starting_x;
+			cur_y = starting_y;
+			//this condition is never called hmmmmm
+			while (size <= m_height && size <= line_len && starting_x + size <= line_len && starting_y + size <= m_height && arr[cur_y][cur_x] != 1)
 			{
 				cur_y = starting_y;
 				while (cur_y < (starting_y + size) && cur_y < m_height && arr[cur_y][cur_x] != 1)
@@ -172,10 +173,10 @@ void	bsq(int **arr,  int m_height, int line_len)
 					cur_x = starting_x;
 					while (cur_x < (starting_x + size) && cur_x < line_len && arr[cur_y][cur_x] != 1)
 					{
-						if (size > biggest_size)
+						printf("cur_x = %d, cur_y = %d, biggest_size = %d, starting_x = %d, starting_y = %d\n", cur_x, cur_y, biggest_size, starting_x, starting_y);
+						if (size > biggest_size && arr[cur_y][cur_x] != 1)
 						{
 							biggest_size = size;
-							printf("cur_x = %d, cur_y = %d\n", cur_x, cur_y);
 							map_clear(square_holder_map, m_height, line_len);
 							map_redraw(square_holder_map, biggest_size, cur_x, cur_y);
 							square_holder_map[cur_y][cur_x] = 3;
